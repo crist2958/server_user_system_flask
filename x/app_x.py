@@ -23,7 +23,7 @@ def login():
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # Obtener al usuario con o sin importar el estatus para verificar después
+    # Obtener al usuarios con o sin importar el estatus para verificar después
     cursor.execute("""
         SELECT u.idUsuario, u.nombreUsuario, u.email, u.idRol, r.nombreRol, u.password_hash, u.estatus
         FROM usuarios u
@@ -40,7 +40,7 @@ def login():
     if user['estatus'] != 'Activo':
         cursor.close()
         conn.close()
-        return jsonify({"error": "El usuario está inactivo"}), 403
+        return jsonify({"error": "El usuarios está inactivo"}), 403
 
     if bcrypt.checkpw(password.encode('utf-8'), user['password_hash'].encode('utf-8')):
         token = str(uuid.uuid4())
@@ -57,7 +57,7 @@ def login():
         return jsonify({
             "mensaje": "Login exitoso",
             "token": token,
-            "usuario": {
+            "usuarios": {
                 "idUsuario": user['idUsuario'],
                 "nombreUsuario": user['nombreUsuario'],
                 "email": user['email'],
@@ -128,7 +128,7 @@ def verify_token():
     conn.close()
 
     if user:
-        return jsonify({'usuario': user}), 200
+        return jsonify({'usuarios': user}), 200
     else:
         return jsonify({'error': 'Token inválido o sesión expirada'}), 401
 

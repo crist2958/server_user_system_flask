@@ -21,8 +21,8 @@ def asignar_permiso():
     accion_permiso = datos['accion']
     operacion = datos['operacion']  # 'asignar' o 'revocar'
 
-    if tipo_destino not in ('usuario', 'rol'):
-        return jsonify({'error': 'tipoDestino inválido, debe ser "usuario" o "rol"'}), 400
+    if tipo_destino not in ('usuarios', 'rol'):
+        return jsonify({'error': 'tipoDestino inválido, debe ser "usuarios" o "rol"'}), 400
 
     if operacion not in ('asignar', 'revocar'):
         return jsonify({'error': 'operacion inválida, debe ser "asignar" o "revocar"'}), 400
@@ -57,8 +57,8 @@ def asignar_permiso():
                 valores_nuevos = f"permiso: {accion_permiso} sobre {tabla_permiso}"
 #----------------------------------------------------------------------------------------------------
 
-            # 1. Obtener usuario desde g
-            id_usuario_actor = getattr(g, 'user_id', None) or getattr(g, 'usuario', {}).get('idUsuario', None)
+            # 1. Obtener usuarios desde g
+            id_usuario_actor = getattr(g, 'user_id', None) or getattr(g, 'usuarios', {}).get('idUsuario', None)
             # 2. Determinar nombre lógico de tabla
             tabla_auditoria = 'rol_permisos' if tipo_destino == 'rol' else 'usuario_permisos'
             # 3. Preparar datos de auditoría

@@ -3,6 +3,8 @@ import bcrypt
 from db_config import get_connection
 from utils.session_validator import session_validator
 from utils.auditoria import registrar_auditoria
+from utils.uploader import subir_archivo
+
 
 registro_bp = Blueprint('registro', __name__)
 
@@ -69,8 +71,8 @@ def registrar_usuario():
 
     except Exception as e:
         conexion.rollback()
-        print("Error al registrar usuario:", e)
-        return jsonify({'error': 'Error al registrar usuario'}), 500
+        print("Error al registrar usuarios:", e)
+        return jsonify({'error': 'Error al registrar usuarios'}), 500
 
     finally:
         conexion.close()
@@ -96,7 +98,7 @@ def actualizar_usuario(id_usuario):
             if not usuario_anterior:
                 return jsonify({'error': 'Usuario no encontrado'}), 404
 
-            # Actualizar usuario
+            # Actualizar usuarios
             cursor.execute("""
                 UPDATE usuarios
                 SET nombreUsuario = %s, nombre = %s, apellidop = %s, apellidom = %s,
@@ -127,8 +129,8 @@ def actualizar_usuario(id_usuario):
 
     except Exception as e:
         conexion.rollback()
-        print("Error al actualizar usuario:", e)
-        return jsonify({'error': 'Error al actualizar usuario'}), 500
+        print("Error al actualizar usuarios:", e)
+        return jsonify({'error': 'Error al actualizar usuarios'}), 500
 
     finally:
         conexion.close()
@@ -149,7 +151,7 @@ def eliminar_usuario(id_usuario):
             if not usuario:
                 return jsonify({'error': 'Usuario no encontrado'}), 404
 
-            # Eliminar usuario
+            # Eliminar usuarios
             cursor.execute("DELETE FROM usuarios WHERE idUsuario = %s", (id_usuario,))
             conexion.commit()
 
@@ -170,8 +172,110 @@ def eliminar_usuario(id_usuario):
 
     except Exception as e:
         conexion.rollback()
-        print("Error al eliminar usuario:", e)
-        return jsonify({'error': 'Error al eliminar usuario'}), 500
+        print("Error al eliminar usuarios:", e)
+        return jsonify({'error': 'Error al eliminar usuarios'}), 500
 
     finally:
         conexion.close()
+
+
+# cargar foto de perfil
+
+@registro_bp.route('/usuarios/<int:id_usuario>/foto', methods=['POST'])
+@session_validator(tabla="usuarios", accion="update")
+def subir_foto_usuario(id_usuario):
+    if 'imagen' not in request.files:
+        return jsonify({'error': 'No se envió ninguna imagen'}), 400
+
+    archivo = request.files['imagen']
+
+    if archivo.filename == '':
+        return jsonify({'error': 'Nombre de archivo vacío'}), 400
+
+    conexion = get_connection()
+    try:
+        with conexion.cursor(dictionary=True) as cursor:
+            # Obtener valor anterior de 'foto'
+            cursor.execute("SELECT foto FROM usuarios WHERE idUsuario = %s", (id_usuario,))
+            usuario = cursor.fetchone()
+
+            if not usuario:
+                return jsonify({'error': 'Usuario no encontrado'}), 404
+
+            foto_anterior = usuario.get('foto')
+
+        # Subir el archivo
+        ruta_guardada = subir_archivo(
+            tabla='usuarios',
+            id_registro=id_usuario,
+            archivo=archivo,
+            campo='foto',
+            carpeta='usuarios',
+            user_id_actor=g.user_id
+        )
+
+        # Registrar auditoría
+        registrar_auditoria(
+            g.user_id,
+            'update',
+            'usuarios',
+            id_usuario,
+            valores_anteriores={'foto': foto_anterior},
+            valores_nuevos={'foto': ruta_guardada}
+        )
+
+        return jsonify({
+            'mensaje': 'Foto de perfil actualizada correctamente',
+            'ruta': ruta_guardada
+        }), 200
+
+    except Exception as e:
+        print("Error al subir la foto de perfil:", e)
+        return jsonify({'error': 'Error al subir la foto de perfil'}), 500
+
+    finally:
+        conexion.close()
+
+
+# consulta
+
+
+from utils.image_fetcher import obtener_url_imagen
+
+@registro_bp.route('/usuarios', methods=['GET'])
+@session_validator(tabla="usuarios", accion="read")
+def obtener_usuarios():
+    conexion = get_connection()
+    try:
+        with conexion.cursor(dictionary=True) as cursor:
+            cursor.execute("""
+                SELECT 
+                    idUsuario, nombreUsuario, nombre, apellidop, apellidom,
+                    email, telefono, idRol, estatus, fechaRegistro, foto
+                FROM usuarios
+            """)
+            usuarios = cursor.fetchall()
+
+            for u in usuarios:
+                u['foto_url'] = obtener_url_imagen(u['foto'])
+
+            # Auditoría
+            id_usuario_actor = getattr(g, 'user_id', None)
+            registrar_auditoria(
+                id_usuario_actor,
+                'read',
+                'usuarios',
+                None,
+                valores_anteriores=None,
+                valores_nuevos=None
+            )
+
+        return jsonify({'usuarios': usuarios}), 200
+
+    except Exception as e:
+        print("Error al obtener usuarios:", e)
+        return jsonify({'error': 'Error al obtener usuarios'}), 500
+
+    finally:
+        conexion.close()
+

@@ -39,7 +39,7 @@ def login():
     if user['estatus'] != 'Activo':
         cursor.close()
         conn.close()
-        return jsonify({"error": "El usuario está inactivo"}), 403
+        return jsonify({"error": "El usuarios está inactivo"}), 403
 
     if bcrypt.checkpw(password.encode('utf-8'), user['password_hash'].encode('utf-8')):
         payload = {
@@ -61,7 +61,7 @@ def login():
         return jsonify({
             "mensaje": "Login exitoso",
             "token": token,
-            "usuario": {
+            "usuarios": {
                 "idUsuario": user['idUsuario'],
                 "nombreUsuario": user['nombreUsuario'],
                 "email": user['email'],
@@ -143,6 +143,6 @@ def verify_token():
     conn.close()
 
     if user:
-        return jsonify({'usuario': user}), 200
+        return jsonify({'usuarios': user}), 200
     else:
         return jsonify({'error': 'Token inválido o sesión cerrada'}), 401

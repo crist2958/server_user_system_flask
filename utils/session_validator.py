@@ -30,7 +30,7 @@ def session_validator(tabla=None, accion=None):
                     if not result:
                         return jsonify({"error": "Sesión inválida"}), 401
 
-                    g.user_id = result[0]  # Guarda el ID del usuario en contexto global
+                    g.user_id = result[0]  # Guarda el ID del usuarios en contexto global
 
                     # Validación de permiso, si se especifican
                     if tabla and accion:
