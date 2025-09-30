@@ -1,5 +1,6 @@
+# user_system/asign_permissions.py
+
 from flask import request, jsonify, g, Blueprint
-import bcrypt
 from db_config import get_connection
 from utils.session_validator import session_validator
 from utils.auditoria import registrar_auditoria

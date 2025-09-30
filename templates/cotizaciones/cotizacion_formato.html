@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ titulo }}</title>
+  <style>
+    /* Reset y tipografía */
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 12px;
+      color: #111827;
+      margin: 28px;
+    }
+
+    /* Encabezado corporativo */
+    .header {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 16px;
+      border-bottom: 2px solid #2c5aa0;
+      padding-bottom: 10px;
+    }
+    .brand {
+      line-height: 1.35;
+    }
+    .brand .empresa {
+      font-size: 20px;
+      font-weight: 800;
+      color: #2c5aa0;
+    }
+    .brand .line { color: #374151; }
+    .meta {
+      text-align: right;
+      font-size: 11px;
+      color: #1f2937;
+    }
+    .meta .row { margin: 2px 0; }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 999px;
+      font-size: 11px; font-weight: 700; background: #e5f0ff; color: #1d4ed8;
+    }
+
+    /* Bloques de info */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 10px 0 16px 0;
+    }
+    .card {
+      border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px;
+    }
+    .card h3 {
+      margin: 0 0 8px 0; font-size: 14px; color: #2c5aa0;
+    }
+    .list { margin: 0; padding: 0; list-style: none; }
+    .list li { margin: 4px 0; }
+    .label { color: #6b7280; }
+    .strong { font-weight: 700; }
+
+    /* Tabla de items */
+    table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+    thead { background: #2c5aa0; color: #fff; }
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 8px 10px; text-align: left; vertical-align: top;
+    }
+    th.small, td.small { width: 90px; text-align: right; white-space: nowrap; }
+    td.right { text-align: right; }
+    .desc { font-weight: 600; }
+    .sub { color: #6b7280; font-size: 11px; }
+
+    /* Totales */
+    .totales {
+      width: 100%; max-width: 340px; margin-left: auto; margin-top: 10px;
+      border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;
+    }
+    .tot-row {
+      display: grid; grid-template-columns: 1fr auto;
+      padding: 8px 10px; border-bottom: 1px solid #e5e7eb;
+    }
+    .tot-row:last-child { border-bottom: none; }
+    .tot-row.total { font-weight: 800; background: #f3f4f6; }
+
+    /* Bloques finales */
+    .cols {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;
+    }
+    .nota { font-size: 11px; color: #374151; }
+    .cta { margin-top: 8px; font-weight: 700; color: #1d4ed8; }
+
+    /* Firma */
+    .firma {
+      margin-top: 18px; text-align: center;
+    }
+    .firma .linea {
+      margin: 24px auto 6px auto; border-top: 1px solid #9ca3af; width: 70%;
+    }
+    .foot {
+      margin-top: 18px; text-align: center; color: #4b5563; font-size: 11px;
+    }
+
+    /* Estética */
+    .muted { color: #6b7280; }
+    .em { color: #1f2937; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <!-- ENCABEZADO -->
+  <div class="header">
+    <div class="brand">
+      <div class="empresa">COMPUTADORAS DEL SUR S.A DE C.V</div>
+      <div class="line">9a Oriente No. 25 entre 3a y 5a Norte</div>
+      <div class="line">Tapachula, Chiapas CP. 30700</div>
+      <div class="line">RFC: CSU850426KI9 · compusur.net · (962) 626 2211 · @compusursadecv</div>
+      <div class="line"><span class="badge">Centro de Servicio Autorizado</span></div>
+    </div>
+    <div class="meta">
+      <div class="row"><span class="strong">COTIZACIÓN #</span> {{ folio }}</div>
+      <div class="row"><span class="strong">FECHA</span> {{ fecha }}</div>
+      <div class="row"><span class="strong">VÁLIDO HASTA</span> {{ valido_hasta }}</div>
+      <div class="row"><span class="strong">Asesor de venta:</span> {{ asesor_nombre }}</div>
+    </div>
+  </div>
+
+  <!-- BLOQUES DE INFORMACIÓN -->
+  <div class="info-grid">
+    <div class="card">
+      <h3>Cliente</h3>
+      <ul class="list">
+        <li><span class="label">Nombre: </span><span class="strong">{{ cliente_nombre }}</span></li>
+        {% if cliente_rfc %}<li><span class="label">RFC: </span>{{ cliente_rfc }}</li>{% endif %}
+        {% if cliente_telefono %}<li><span class="label">Teléfono: </span>{{ cliente_telefono }}</li>{% endif %}
+        {% if cliente_email %}<li><span class="label">Email: </span>{{ cliente_email }}</li>{% endif %}
+        {% if cliente_direccion %}<li><span class="label">Dirección: </span>{{ cliente_direccion }}</li>{% endif %}
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Contacto</h3>
+      <div class="nota">
+        Si tiene alguna pregunta sobre esta cotización, favor de contactar a:<br>
+        <span class="em">{{ asesor_nombre }}</span>{% if asesor_telefono %}, TEL: {{ asesor_telefono }}{% endif %}{% if asesor_email %}, E-MAIL: {{ asesor_email }}{% endif %}
+      </div>
+      <div class="cta">¡Estamos conectados a tu servicio!</div>
+    </div>
+  </div>
+
+  <!-- TABLA DE ITEMS -->
+  <table>
+    <thead>
+      <tr>
+        <th>DESCRIPCIÓN</th>
+        <th class="small">PREC. UNI.</th>
+        <th class="small">CANT.</th>
+        <th class="small">TOTAL</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for it in items %}
+      <tr>
+        <td>
+          <div class="desc">{{ it.nombre }}</div>
+          <div class="sub">{{ it.marca }} {{ it.modelo }}</div>
+        </td>
+        <td class="right small">${{ money(it.precioUnitario) }}</td>
+        <td class="right small">{{ it.cantidad }}</td>
+        <td class="right small">${{ money(it.precioUnitario * it.cantidad) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- TOTALES -->
+  <div class="totales">
+    <div class="tot-row"><div>Subtotal</div><div>${{ money(subtotal) }}</div></div>
+    <div class="tot-row">
+      <div>Descuento ({{ descuento_porcentaje|default(0) }}%)</div>
+      <div>- ${{ money(descuento_monto|default(0)) }}</div>
+    </div>
+    <div class="tot-row">
+      <div>Impuesto % {{ iva_aplica and (iva_porcentaje|string + '%') or '0%' }}</div>
+      <div>{{ iva_aplica and ('$' ~ money(iva_monto)) or '$0.00' }}</div>
+    </div>
+    <div class="tot-row total"><div>TOTAL</div><div>${{ money(total) }}</div></div>
+  </div>
+
+  <!-- TÉRMINOS, CUENTAS, FIRMA -->
+  <div class="cols">
+    <div class="card">
+      <h3>Términos y condiciones</h3>
+      <div class="nota">
+        1. Material que es sobrepedido: no hay cancelaciones ni devoluciones.<br>
+        2. Precios más IVA.<br>
+        3. Se requiere 50% de anticipo.<br>
+        4. Por favor confirmar por correo electrónico el visto bueno de esta cotización.
+           En caso de hoja física, firmar aquí.
+      </div>
+    </div>
+    <div class="card">
+      <h3>Cuentas para depósito</h3>
+      <div class="nota">
+        * Colocar como referencia el # de Cotización al depósito o transferencia.<br>
+        * Favor de enviar la ficha del depósito o transferencia a <strong>lruiz@compusur.net</strong>.<br>
+        * Enviar datos fiscales en el correo donde mande el comprobante de pago.
+      </div>
+    </div>
+  </div>
+
+  <div class="firma">
+    <div class="linea"></div>
+    <div>Nombre del cliente</div>
+  </div>
+
+  <div class="foot">
+    Centro de Servicio Autorizado - COMPUTADORAS DEL SUR S.A DE C.V
+  </div>
+
+</body>
+</html>

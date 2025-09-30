@@ -1,3 +1,5 @@
+# utils/session_validator.py
+
 from functools import wraps
 from flask import request, jsonify, g
 from utils.verificador_permisos import verificar_permiso
@@ -5,7 +7,7 @@ from db_config import get_connection
 
 def session_validator(tabla=None, accion=None):
     """
-    Decorador que valida el token de sesión activa y, opcionalmente, permisos para una acción sobre una tabla.
+    Decorador que valida el token de sesión activa y permisos
     """
     def decorator(f):
         @wraps(f)
@@ -22,15 +24,17 @@ def session_validator(tabla=None, accion=None):
                 conexion = get_connection()
                 with conexion.cursor() as cursor:
                     cursor.execute("""
-                        SELECT idUsuario FROM historico_sesiones 
-                        WHERE token_sesion = %s AND fechaLogout IS NULL
+                        SELECT u.idUsuario 
+                        FROM historico_sesiones hs
+                        JOIN usuarios u ON hs.idUsuario = u.idUsuario
+                        WHERE hs.token_sesion = %s AND hs.fechaLogout IS NULL
                     """, (token,))
                     result = cursor.fetchone()
 
                     if not result:
                         return jsonify({"error": "Sesión inválida"}), 401
 
-                    g.user_id = result[0]  # Guarda el ID del usuarios en contexto global
+                    g.user_id = result[0]  # Guarda el ID del usuario en contexto global
 
                     # Validación de permiso, si se especifican
                     if tabla and accion:
@@ -41,7 +45,8 @@ def session_validator(tabla=None, accion=None):
                 print("Error en session_validator:", e)
                 return jsonify({"error": "Error interno en la validación de sesión"}), 500
             finally:
-                conexion.close()
+                if conexion:
+                    conexion.close()
 
             return f(*args, **kwargs)
         return decorated_function

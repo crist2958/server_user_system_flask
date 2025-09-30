@@ -1,27 +1,38 @@
-# utils/file_utils.py
+# /user_system/user/utils/file_utils.py
+
 import os
+import bcrypt
 from werkzeug.utils import secure_filename
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+def subir_archivo(tabla, id_registro, archivo, campo, carpeta):
+    """Sube un archivo al sistema y actualiza la base de datos"""
+    # Crear directorio si no existe
+    ruta_directorio = os.path.join('uploads', carpeta)
+    os.makedirs(ruta_directorio, exist_ok=True)
 
-def guardar_imagen(file, carpeta_destino='usuarios', nombre_personalizado=None):
-    if not allowed_file(file.filename):
-        raise ValueError("Formato de imagen no permitido")
+    # Generar nombre seguro
+    nombre_seguro = secure_filename(archivo.filename)
+    nombre_archivo = f'{id_registro}_{nombre_seguro}'
+    ruta_completa = os.path.join(ruta_directorio, nombre_archivo)
 
-    filename = secure_filename(file.filename)
-    ext = filename.rsplit('.', 1)[1].lower()
+    # Guardar archivo
+    archivo.save(ruta_completa)
 
-    if nombre_personalizado:
-        filename = f"{nombre_personalizado}.{ext}"
+    return nombre_archivo
 
-    ruta_base = os.path.join('uploads', carpeta_destino)
-    os.makedirs(ruta_base, exist_ok=True)
 
-    ruta_relativa = os.path.join(ruta_base, filename)
-    file.save(ruta_relativa)
+def eliminar_archivo(nombre_archivo, carpeta):
+    """Elimina un archivo del sistema"""
+    if not nombre_archivo:
+        return False
 
-    return ruta_relativa
+    try:
+        ruta_archivo = os.path.join('uploads', carpeta, nombre_archivo)
+        if os.path.exists(ruta_archivo):
+            os.remove(ruta_archivo)
+            return True
+        return False
+    except Exception as e:
+        print(f"Error al eliminar archivo: {e}")
+        return False

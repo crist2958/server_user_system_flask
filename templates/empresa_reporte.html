@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Empresas</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 11px;
+            color: #333;
+            margin: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 10px;
+        }
+
+        .empresa {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .subinfo {
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .info-doc {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+        }
+
+        .titulo-reporte {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #2563eb;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            word-wrap: break-word;
+        }
+
+        thead {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        th, td {
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f1f5f9;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #777;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ENCABEZADO -->
+    <div class="header">
+        <div class="empresa">COMPUSUR S.A. DE C.V.</div>
+        <div class="subinfo">9a Oriente No. 25 entre 3a y 5a Norte - Tapachula, Chiapas</div>
+        <div class="subinfo">RFC: CSU850426KI9 | Tel: (962) 626 2211 | www.compusur.net</div>
+    </div>
+
+    <!-- INFO DOCUMENTO -->
+    <div class="info-doc">
+        <div><strong>Fecha:</strong> {{ fecha }}</div>
+        <div><strong>Folio:</strong> REP-{{ fecha.replace('/', '')[:8]|replace(':', '') }}</div>
+    </div>
+
+    <div class="titulo-reporte">Reporte de Empresas</div>
+
+    <!-- TABLA -->
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre Comercial</th>
+                <th>RFC</th>
+                <th>Razón Social</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Domicilio Fiscal</th>
+                <th>Fecha Registro</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in empresas %}
+            <tr>
+                <td>{{ emp.nombre }}</td>
+                <td>{{ emp.rfc or '' }}</td>
+                <td>{{ emp.razonSocial or '' }}</td>
+                <td>{{ emp.telefono or '' }}</td>
+                <td>{{ emp.email }}</td>
+                <td>{{ emp.domicilioFiscal or '' }}</td>
+                <td>{{ emp.fechaRegistro.strftime('%d/%m/%Y') if emp.fechaRegistro else '' }}</td>
+                <td>{{ emp.estatus }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        Este documento fue generado automáticamente por el sistema de gestión. Para validación, contactar a sistemas.
+    </div>
+
+</body>
+</html>

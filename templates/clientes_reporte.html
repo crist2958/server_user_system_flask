@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ titulo }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 12px;
+            color: #333;
+            margin: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #2c5aa0;
+            padding-bottom: 10px;
+        }
+
+        .header .empresa {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c5aa0;
+        }
+
+        .header .subinfo {
+            font-size: 0.9rem;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        .info-doc {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .titulo-reporte {
+            text-align: center;
+            font-size: 1.3rem;
+            color: #2c5aa0;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        thead {
+            background-color: #2c5aa0;
+            color: white;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f4f7fb;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 0.85rem;
+            text-align: center;
+            color: #777;
+            border-top: 1px solid #ccc;
+            padding-top: 15px;
+        }
+
+        .notas {
+            margin-top: 25px;
+            font-size: 0.9rem;
+        }
+
+        .notas h4 {
+            color: #2c5aa0;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .notas ul {
+            padding-left: 20px;
+        }
+
+        .notas ul li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="empresa">COMPUTADORAS DEL SUR S.A DE C.V</div>
+        <div class="subinfo">9a Oriente No. 25 entre 3a y 5a Norte - Tapachula, Chiapas C.P. 30700</div>
+        <div class="subinfo">RFC: CSU850426KI9 | Tel: (962) 626 2211 | Facebook: www.compusur.net</div>
+    </div>
+
+    <div class="info-doc">
+        <div><strong>Fecha de generación:</strong> {{ fecha }}</div>
+        <div><strong>Folio:</strong> REP-{{ fecha.replace('/', '')[:8]|replace(':', '') }}</div>
+    </div>
+
+    <div class="titulo-reporte">{{ titulo }}</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido Paterno</th>
+                <th>Apellido Materno</th>
+                <th>RFC</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Dirección</th>
+                <th>Fecha Registro</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in personas %}
+            <tr>
+                <td>{{ p.nombre }}</td>
+                <td>{{ p.apellidoP or '' }}</td>
+                <td>{{ p.apellidoM or '' }}</td>
+                <td>{{ p.rfc or '' }}</td>
+                <td>{{ p.telefono or '' }}</td>
+                <td>{{ p.email }}</td>
+                <td>{{ p.direccion or '' }}</td>
+                <td>{{ p.fechaRegistro.strftime("%d/%m/%Y") if p.fechaRegistro else '' }}</td>
+                <td>{{ p.estatus }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="notas">
+        <h4>Notas importantes:</h4>
+        <ul>
+            <li>Este reporte es generado automáticamente por el sistema de gestión.</li>
+            <li>Para dudas o soporte técnico, contacte al departamento de sistemas.</li>
+            <li>Los datos mostrados corresponden a los criterios de búsqueda utilizados.</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        Centro de Servicio Autorizado - COMPUTADORAS DEL SUR S.A DE C.V<br>
+        Este documento no requiere firma. Para validación, consulte al administrador del sistema.
+    </div>
+
+</body>
+</html>
